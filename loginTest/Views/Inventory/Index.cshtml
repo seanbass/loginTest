@@ -1,0 +1,218 @@
+﻿@model List<InventoryDash.Models.WeeklyInventorySandwichesViewModel>
+
+@{
+    ViewBag.Title = "Weekly Inventory";
+}
+
+<h2>
+    Weekly Inventory -
+    @{ //Determining the week span of dates Monday to Sunday, based off today's date.
+        int counter = 0;
+        int dayOfWeek = Convert.ToInt32(DateTime.Today.DayOfWeek);
+        int currentYear = Convert.ToInt32(DateTime.Today.Year);
+        string mondayOfWeek = "";
+        string sundayOfWeek = "";
+        switch (dayOfWeek)
+        {
+            case 0: //Sunday
+                mondayOfWeek = DateTime.Today.AddDays(-6).ToString("D");
+                sundayOfWeek = DateTime.Today.ToString("D");
+                break;
+            case 1: // Monday
+                mondayOfWeek = DateTime.Today.ToString("D");
+                sundayOfWeek = DateTime.Today.AddDays(6).ToString("D");
+                break;
+            case 2: //Tuesday
+                mondayOfWeek = DateTime.Today.AddDays(-2).ToString("D");
+                sundayOfWeek = DateTime.Today.AddDays(5).ToString("D");
+                break;
+            case 3: //Wednesday
+                mondayOfWeek = DateTime.Today.AddDays(-2).ToString("D");
+                sundayOfWeek = DateTime.Today.AddDays(4).ToString("D");
+                break;
+            case 4:
+                mondayOfWeek = DateTime.Today.AddDays(-3).ToString("D");
+                sundayOfWeek = DateTime.Today.AddDays(3).ToString("D");
+                break;
+            case 5:
+                mondayOfWeek = DateTime.Today.AddDays(-4).ToString("D");
+                sundayOfWeek = DateTime.Today.AddDays(2).ToString("D");
+                break;
+            case 6:
+                mondayOfWeek = DateTime.Today.AddDays(-5).ToString("D");
+                sundayOfWeek = DateTime.Today.AddDays(1).ToString("D");
+                break;
+            default:
+                break;
+        }
+    }
+
+    <select id="yearSelector">
+        @for (int i = Convert.ToInt32(ViewData["startingYear"]); i <= currentYear; i++)
+        {
+            <option value="@i">@i.ToString()</option>
+        }
+    </select>
+    @mondayOfWeek to @sundayOfWeek
+</h2>
+<p>@ViewData["weekOfYear"]</p>
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    <ul class="nav nav-tabs">
+        <li class="active"><a data-toggle="tab" href="#breakfast">Breakfast</a></li>
+        <li><a data-toggle="tab" href="#lunch">Lunch</a></li>
+    </ul>
+
+    <div class="tab-content">
+        <div id="breakfast" class="tab-pane fade in active">
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-8">
+                        <h3>Breakfast Items</h3>
+                        <table class="table">
+                            <tr>
+                                <th>Item</th>
+                                <th>Qty (Dine-In)</th>
+                                <th>Qty (To-Go)</th>
+                            </tr>
+                            <tbody>
+
+                                @foreach (var s in (List<InventoryDash.Models.WeeklyInventorySandwichesViewModel>)Model)
+                                {
+                                    <tr>
+                                        @if (s.MealId == InventoryDash.Models.meal.breakfast || (s.Meal == InventoryDash.Models.meal.both && s.ID == null) || (s.Meal == InventoryDash.Models.meal.breakfast && s.ID == null))
+                                        {
+                                            <td>
+                                                @s.Name
+                                            @Html.Hidden("weeklyInventorySandwiches[" + @counter + "].SandwichID", s.SandwichId)
+                                            @Html.Hidden("weeklyInventorySandwiches[" + @counter + "].MealId", InventoryDash.Models.meal.breakfast) @*Making sure items marked both, create records marked breakfast*@
+                                            @Html.Hidden("weeklyInventorySandwiches[" + @counter + "].WeekId", s.WeekId > 0 ? s.WeekId : ViewData["weekOfYear"])
+                                            @Html.Hidden("weeklyInventorySandwiches[" + @counter + "].ID", s.ID)
+                                            @Html.Hidden("weeklyInventorySandwiches[" + @counter + "].Cost", s.Cost)
+                                            @Html.Hidden("weeklyInventorySandwiches[" + @counter + "].Income", s.Income)
+                                        </td>
+
+                                            <td class="col-md-1">@Html.TextBox("weeklyInventorySandwiches[" + @counter + "].QuantityDineIn", s.QuantityDineIn)</td>
+                                            <td class="col-md-1">@Html.TextBox("weeklyInventorySandwiches[" + @counter + "].QuantityToGo", s.QuantityToGo)</td>
+                                            counter++;
+                                        }
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+
+                    </div>
+                    <div class="col-lg-4">
+                        <h3>Summary</h3>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div id="lunch" class="tab-pane fade">
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-8">
+                        <h3>Lunch Items</h3>
+                        <table class="table">
+                            <tr>
+                                <th>Item</th>
+                                <th>Qty (Dine-In)</th>
+                                <th>Qty (To-Go)</th>
+                            </tr>
+                            <tbody>
+                                @foreach (var s in (List<InventoryDash.Models.WeeklyInventorySandwichesViewModel>)Model)
+                                {
+                                    <tr>
+                                        @if (s.MealId == InventoryDash.Models.meal.lunch || (s.Meal == InventoryDash.Models.meal.both && s.ID == null) || (s.Meal == InventoryDash.Models.meal.lunch && s.ID == null))
+                                        {
+                                            <td>
+                                                @s.Name
+                                                @Html.Hidden("weeklyInventorySandwiches[" + @counter + "].SandwichID", s.SandwichId)
+                                                @Html.Hidden("weeklyInventorySandwiches[" + @counter + "].MealId", InventoryDash.Models.meal.lunch)@*Making sure the meal value for sandwiches marked both, create records for lunch.*@
+                                                @Html.Hidden("weeklyInventorySandwiches[" + @counter + "].WeekId", s.WeekId > 0 ? s.WeekId : ViewData["weekOfYear"])
+                                                @Html.Hidden("weeklyInventorySandwiches[" + @counter + "].ID", s.ID)
+                                                @Html.Hidden("weeklyInventorySandwiches[" + @counter + "].Cost", s.Cost)
+                                                @Html.Hidden("weeklyInventorySandwiches[" + @counter + "].Income", s.Income)
+                                            </td>
+
+                                            <td class="col-md-1">@Html.TextBox("weeklyInventorySandwiches[" + @counter + "].QuantityDineIn", s.QuantityDineIn)</td>
+                                            <td class="col-md-1">@Html.TextBox("weeklyInventorySandwiches[" + @counter + "].QuantityToGo", s.QuantityToGo)</td>
+                                            counter++;
+                                        }
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+
+                    </div>
+                    <div class="col-lg-4">
+                        <h3>Summary</h3>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div id="beverages" class="tab-pane fade">
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-8">
+                        <h3>Beverages</h3>
+                        <table class="table">
+                            <tr>
+                                <th>Item</th>
+                                <th>Qty (Dine-In)</th>
+                                <th>Qty (To-Go)</th>
+                            </tr>
+                            <tbody>
+                                <tr>
+                                    <td></td>
+                                    <td class="col-md-1"><input type="text" class="form-control" id="qty"></td>
+                                    <td class="col-md-1"><input type="text" class="form-control" id="qty"></td>
+                                </tr>
+                            </tbody>
+                        </table>
+
+                    </div>
+                    <div class="col-lg-4">
+                        <h3>Summary</h3>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div id="extras" class="tab-pane fade">
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-8">
+                        <h3>Extras</h3>
+                        <table class="table">
+                            <tr>
+                                <th>Item</th>
+                                <th>Qty (Dine-In)</th>
+                                <th>Qty (To-Go</th>
+                            </tr>
+                            <tbody>
+                                <tr>
+                                    <td></td>
+                                    <td class="col-md-1"><input type="text" class="form-control" id="qty"></td>
+                                    <td class="col-md-1"><input type="text" class="form-control" id="qty"></td>
+                                </tr>
+                            </tbody>
+                        </table>
+
+                    </div>
+                    <div class="col-lg-4">
+                        <h3>Summary</h3>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+    <div class="row">
+        <div class="col-lg-12 text-center">
+            <input type="submit" value="Submit Changes" class="btn btn-block btn-primary " />
+        </div>
+    </div>
+
+} <!--//End of using tag -->

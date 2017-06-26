@@ -1,7 +1,7 @@
 ﻿using System.Web;
 using System.Web.Optimization;
 
-namespace loginTest
+namespace InventoryDash
 {
     public class BundleConfig
     {

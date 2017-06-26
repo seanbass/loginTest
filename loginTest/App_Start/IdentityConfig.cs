@@ -12,7 +12,7 @@ using Microsoft.Owin;
 using Microsoft.Owin.Security;
 using loginTest.Models;
 
-namespace loginTest
+namespace InventoryDash
 {
     public class EmailService : IIdentityMessageService
     {

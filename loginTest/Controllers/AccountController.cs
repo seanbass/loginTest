@@ -10,7 +10,7 @@ using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin.Security;
 using loginTest.Models;
 
-namespace loginTest.Controllers
+namespace InventoryDash.Controllers
 {
     [Authorize]
     public class AccountController : Controller

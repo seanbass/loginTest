@@ -1,7 +1,7 @@
 ﻿using System.Web;
 using System.Web.Mvc;
 
-namespace loginTest
+namespace InventoryDash
 {
     public class FilterConfig
     {

@@ -7,7 +7,7 @@ using Microsoft.Owin.Security.Google;
 using Owin;
 using loginTest.Models;
 
-namespace loginTest
+namespace InventoryDash
 {
     public partial class Startup
     {
